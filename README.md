@@ -4,6 +4,8 @@ Markdown rule repository for the intelligent code review demo.
 
 This repository stores reusable review knowledge only. PRD and TD summaries are generated during a pull request run in the implementation repository and uploaded as CI artifacts; they are not stored here.
 
+Knowledgebase rules focus on coding errors, coding mistakes, maintainability risks, security risks, and engineering practices. PRD/TD alignment is handled by the separate business-rules pipeline.
+
 ## Layers
 
 Rules are organized by scope and language. Each layer/language keeps rules in one `RULES.md` file:
