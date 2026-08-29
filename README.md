@@ -1,61 +1,62 @@
 # Code Review Knowledgebase
 
-Markdown rule repository for the intelligent code review demo.
+Markdown coding-rule repository for the intelligent code review demo.
 
-This repository stores reusable review knowledge only. PRD and TD summaries are generated during a pull request run in the implementation repository and uploaded as CI artifacts; they are not stored here.
+This repo stores reusable engineering knowledge only. It does not store PRD/TDD summaries, business requirement artifacts, generated review reports, or executable review-agent code.
 
-Knowledgebase rules focus on coding errors, coding mistakes, maintainability risks, security risks, and engineering practices. PRD/TD alignment is handled by the separate business-rules pipeline.
+## Repository Role
 
-## Layers
+- Store lightweight markdown rules for coding errors and implementation mistakes.
+- Organize rules by common, department, and project layers.
+- Keep one `RULES.md` per layer/language so CI can load a small number of files.
+- Validate rule format in CI before rules are merged.
+- Provide stable rule IDs used by PR comments and future analytics.
 
-Rules are organized by scope and language. Each layer/language keeps rules in one `RULES.md` file:
+## Layering Model
 
-```text
-common/
-  go/
-    RULES.md
-demo/
-  go/
-    RULES.md
-  demo-project/
-    go/
-      RULES.md
-docs/
+```mermaid
+flowchart LR
+  Config[Target repo .code-review.yml] --> Layers[Configured layers]
+  Layers --> Common[common/go/RULES.md]
+  Layers --> Dept[demo/go/RULES.md]
+  Layers --> Repo[demo/demo-project/go/RULES.md]
+  Common --> Agent[code-review-agent]
+  Dept --> Agent
+  Repo --> Agent
+  Agent --> PR[PR inline comments]
 ```
 
-- `common/go`: company-wide Go rules.
-- `demo/go`: department-level Go rules for the demo department.
-- `demo/demo-project/go`: project-level Go rules for `code-review-demo`.
+Current demo layers:
 
-Target repositories decide which layers to load in their `.code-review.yml`.
+| Layer | Purpose |
+| --- | --- |
+| `common/go` | Company-wide Go rules. |
+| `demo/go` | Demo department Go rules. |
+| `demo/demo-project/go` | Project-level Go rules for `code-review-demo`. |
 
-## Loading Strategy
+Target repositories choose their layers in `.code-review.yml`.
 
-The agent should read one `RULES.md` file per configured layer. For `code-review-demo`, that means three reads:
+## Rule Loading Flow
 
-1. `common/go/RULES.md`
-2. `demo/go/RULES.md`
-3. `demo/demo-project/go/RULES.md`
+```mermaid
+sequenceDiagram
+  participant Repo as Implementation repo
+  participant Agent as code-review-agent
+  participant KB as code-review-knowledgebase
+  Repo->>Agent: Provide configured layers and disabled rule IDs
+  Agent->>KB: Read one RULES.md per layer/language
+  Agent->>Agent: Skip disabled rule IDs
+  Agent->>Agent: Build compact LLM payload
+  Agent->>Repo: Publish comments with rule ID, slug, and severity
+```
 
-This avoids reading hundreds of small files during CI while preserving common, department, and project-level rule layering.
-
-## Rule IDs
-
-Use stable rule IDs so findings can be tracked, disabled, counted, and improved over time.
-
-Suggested prefixes:
-
-- `GO-COM-###`: common Go rules.
-- `GO-DEMO-###`: demo department Go rules.
-- `GO-DEMO-PROJ-###`: demo project Go rules.
+The compact LLM payload keeps review-critical content and removes governance metadata such as `Contributor`, `Tags`, and `References` to reduce token usage.
 
 ## Rule Format
 
-Rules use pure markdown without YAML front matter. Each rule starts with a level-two linked heading for navigation, followed by a small metadata table and standard sections.
+Rules use pure markdown without YAML front matter. Each rule starts with a level-two linked heading, followed by a small field/value table and standard sections.
 
-The scope and language are derived from the `RULES.md` path, so they are not repeated in every rule table. The agent keeps the full rule for reporting and governance, but sends a compact rule payload to the LLM that excludes `Contributor`, `Tags`, and `References`.
-
-```markdown
+````markdown
 ## [Always close HTTP response bodies](#close-http-response-bodies)
 
 | Field | Value |
@@ -73,15 +74,15 @@ Describe the rule.
 
 ### Background
 
-Explain the context behind the rule.
+Explain why the issue appears.
 
 ### Risks
 
-Explain correctness, performance, security, or maintainability risks.
+Explain correctness, security, reliability, performance, or maintainability risks.
 
 ### Review Checklist
 
-Describe what the reviewer should inspect.
+Describe what reviewers and the agent should inspect.
 
 ### Good Example
 
@@ -99,21 +100,68 @@ _ = resp
 ### Review Comment Guidance
 
 Explain how the finding should be written to the developer.
-```
+````
 
-## Disabled Rules
+## Required Fields
 
-Rules can be disabled by ID in a target repository config when a broader rule intentionally does not apply to that repo. The agent should skip rule sections whose metadata table has a disabled `ID`.
+| Field | Meaning |
+| --- | --- |
+| `ID` | Stable identifier used in comments, suppressions, and analytics. |
+| `Slug` | Stable anchor used for navigation and comments. |
+| `Contributor` | Email of the rule contributor or substantial updater. |
+| `Severity` | `P0`, `P1`, `P2`, or `P3`, where `P0` is most serious. |
+| `Tags` | Lightweight grouping labels. |
+| `References` | Optional supporting links or `None`. |
 
-## Contributor Field
-
-- `Contributor`: email that originally contributed the rule or most recent substantial update.
+Do not add `Owner`, `Level`, `Scope`, or `Language`. Scope and language come from the path, and severity replaces level.
 
 ## Severity
 
-Severity represents both impact and review priority for this demo:
+| Severity | Meaning |
+| --- | --- |
+| `P0` | Critical security, data loss, outage, or severe production risk. |
+| `P1` | Likely correctness, reliability, or security issue. |
+| `P2` | Maintainability, observability, performance, or moderate correctness risk. |
+| `P3` | Readability, consistency, or minor improvement. |
 
-- `P0`: critical security, data loss, outage, or severe production risk.
-- `P1`: likely correctness, reliability, or security issue.
-- `P2`: maintainability, observability, performance, or moderate correctness risk.
-- `P3`: readability, consistency, or minor improvement.
+## Validation
+
+Rule changes are checked by `.github/workflows/validate-rules.yml`, which runs `scripts/validate_rules.py`.
+
+The validator checks:
+
+- every rule uses a linked markdown heading.
+- required metadata fields are present.
+- IDs match the expected path prefix.
+- slugs are unique and match heading anchors.
+- contributor values are email addresses.
+- severity is one of `P0`, `P1`, `P2`, `P3`.
+- required rule sections exist.
+- YAML front matter and deprecated fields are not used.
+
+Run locally from this repo:
+
+```bash
+python3 scripts/validate_rules.py
+```
+
+## Suppressing Rules
+
+Rules can be disabled by ID in a target repository:
+
+```yaml
+knowledge:
+  disabled_rules:
+    - GO-COM-001
+```
+
+Suppressions should be rare. Prefer narrowing or improving a rule when it creates repeated false positives across repositories.
+
+## Governance and Future Improvements
+
+- Use stable IDs because comments, suppressions, and future metrics depend on them.
+- Promote project rules to department or common layers when they become broadly useful.
+- Merge duplicate or overlapping rules based on measured effectiveness.
+- Export finding consumption data to an external Hive table.
+- Use Hive-backed analysis to measure rule effectiveness, false positives, resolved findings, unresolved findings, consumption rate, and non-consumption rate.
+- Treat developer reactions such as upvotes/downvotes as optional future feedback signals.
