@@ -51,18 +51,17 @@ Suggested prefixes:
 
 ## Rule Format
 
-Rules use pure markdown without YAML front matter. Each rule starts with a level-two heading containing the stable rule ID and title, followed by a metadata table and standard sections:
+Rules use pure markdown without YAML front matter. Each rule starts with a level-two heading containing the stable rule ID, slug, and title, followed by a metadata table and standard sections.
+
+The scope and language are derived from the `RULES.md` path, so they are not repeated in every rule table.
 
 ```markdown
-## GO-COM-001: Always close HTTP response bodies
+## GO-COM-001: close-http-response-bodies - Always close HTTP response bodies
 
 | Field | Value |
 | --- | --- |
-| Slug | `close-http-response-bodies` |
-| Scope | `common` |
-| Language | `go` |
-| Owner | `platform-engineering` |
-| Contributor | `codex` |
+| Owner | `example@gmail.com` |
+| Contributor | `example@gmail.com` |
 | Level | `recommended` |
 | Severity | `medium` |
 | Tags | `resource-management` |
@@ -108,5 +107,10 @@ Rules can be disabled by ID in a target repository config when a broader rule in
 
 ## Ownership Fields
 
-- `Owner`: team or project accountable for maintaining the rule and deciding whether it should be changed, promoted, or deprecated.
-- `Contributor`: person, team, or automation that originally contributed the rule or most recent substantial update.
+- `Owner`: email accountable for maintaining the rule and deciding whether it should be changed, promoted, or deprecated.
+- `Contributor`: email that originally contributed the rule or most recent substantial update. For now, this can match `Owner`.
+
+## Level And Severity
+
+- `Level`: how strongly the organization wants the rule enforced, such as `required`, `recommended`, or `advisory`.
+- `Severity`: expected impact when the rule is violated, such as `low`, `medium`, `high`, or `critical`.

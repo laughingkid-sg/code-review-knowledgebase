@@ -21,15 +21,12 @@ Add new rules to the relevant layer/language `RULES.md` file. Keep rule IDs stab
 Each rule should use this shape:
 
 ```markdown
-## GO-COM-001: Short rule title
+## GO-COM-001: short-rule-slug - Short rule title
 
 | Field | Value |
 | --- | --- |
-| Slug | `short-rule-slug` |
-| Scope | `common` |
-| Language | `go` |
-| Owner | `platform-engineering` |
-| Contributor | `codex` |
+| Owner | `example@gmail.com` |
+| Contributor | `example@gmail.com` |
 | Level | `recommended` |
 | Severity | `medium` |
 | Tags | `tag-one`, `tag-two` |
@@ -52,4 +49,19 @@ Suppressions should be rare and intentional. Prefer improving or narrowing the r
 
 ## Ownership
 
-Use `Owner` for the accountable team or project. Use `Contributor` for the person, team, or automation that supplied the rule content. These fields support future review routing and rule effectiveness reporting.
+Use `Owner` for the accountable email. Use `Contributor` for the email that supplied the rule content. These fields support future review routing and rule effectiveness reporting. For the current demo, `Owner` and `Contributor` can be the same email.
+
+## Level And Severity
+
+Use `Level` for enforcement policy:
+
+- `required`: should block or demand a fix when confidently detected.
+- `recommended`: should normally be fixed, but may allow judgment.
+- `advisory`: useful guidance with low enforcement pressure.
+
+Use `Severity` for impact:
+
+- `critical`: security, data loss, or severe production risk.
+- `high`: likely correctness, security, or reliability issue.
+- `medium`: maintainability, observability, or moderate correctness risk.
+- `low`: minor readability or consistency issue.
