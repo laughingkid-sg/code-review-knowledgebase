@@ -2,17 +2,12 @@
 
 Project-level Go rules for `code-review-demo`.
 
-## GO-DEMO-PROJ-001: Do not continue after request binding or decode failures
+## GO-DEMO-PROJ-001: stop-after-request-binding-failure - Do not continue after request binding or decode failures
 
 | Field | Value |
 | --- | --- |
-| Slug | `stop-after-request-binding-failure` |
-| Scope | `project` |
-| Department | `demo` |
-| Project | `demo-project` |
-| Language | `go` |
-| Owner | `demo-project` |
-| Contributor | `codex` |
+| Owner | `example@gmail.com` |
+| Contributor | `example@gmail.com` |
 | Level | `required` |
 | Severity | `high` |
 | Tags | `http`, `validation`, `error-handling` |

@@ -2,15 +2,12 @@
 
 Company-wide Go rules loaded by default for Go repositories.
 
-## GO-COM-001: Return errors with enough context
+## GO-COM-001: return-errors-with-context - Return errors with enough context
 
 | Field | Value |
 | --- | --- |
-| Slug | `return-errors-with-context` |
-| Scope | `common` |
-| Language | `go` |
-| Owner | `platform-engineering` |
-| Contributor | `codex` |
+| Owner | `example@gmail.com` |
+| Contributor | `example@gmail.com` |
 | Level | `recommended` |
 | Severity | `medium` |
 | Tags | `errors`, `observability` |
