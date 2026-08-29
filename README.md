@@ -4,6 +4,12 @@ Markdown coding-rule repository for the intelligent code review demo.
 
 This repo stores reusable engineering knowledge only. It does not store PRD/TDD summaries, business requirement artifacts, generated review reports, or executable review-agent code.
 
+## References
+
+1. Agent / GitHub Action - [https://github.com/laughingkid-sg/code-review-agent](https://github.com/laughingkid-sg/code-review-agent)
+2. Implementation Example - [https://github.com/laughingkid-sg/code-review-demo](https://github.com/laughingkid-sg/code-review-demo)
+3. Knowledge Base Example - [https://github.com/laughingkid-sg/code-review-knowledgebase](https://github.com/laughingkid-sg/code-review-knowledgebase)
+
 ## Repository Role
 
 - Store lightweight markdown rules for coding errors and implementation mistakes.
