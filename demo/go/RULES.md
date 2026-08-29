@@ -40,14 +40,43 @@ The demo projects are designed to make business logic review possible across sim
 ### Good Example
 
 ```go
-order, err := h.service.CreateOrder(ctx, req)
+func (h *OrderHandler) CreateOrder(c *gin.Context) {
+	var req CreateOrderRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	order, err := h.service.CreateOrder(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(statusFromError(err), errorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusCreated, order)
+}
 ```
 
 ### Bad Example
 
 ```go
-if customer.Tier == "gold" && total > 100 {
-	order.Discount = 10
+func (h *OrderHandler) CreateOrder(c *gin.Context) {
+	var req CreateOrderRequest
+	_ = c.ShouldBindJSON(&req)
+
+	total := 0
+	for _, item := range req.Items {
+		total += item.Quantity * item.UnitPrice
+	}
+
+	order := model.Order{
+		CustomerID: req.CustomerID,
+		Total:      total,
+		Status:     "pending",
+	}
+
+	_ = h.repository.Save(c.Request.Context(), order)
+	c.JSON(http.StatusCreated, order)
 }
 ```
 
