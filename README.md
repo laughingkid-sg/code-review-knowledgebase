@@ -59,6 +59,8 @@ Rules use pure markdown without YAML front matter. Each rule starts with a level
 | Slug | `close-http-response-bodies` |
 | Scope | `common` |
 | Language | `go` |
+| Owner | `platform-engineering` |
+| Contributor | `codex` |
 | Level | `recommended` |
 | Severity | `medium` |
 | Tags | `resource-management` |
@@ -101,3 +103,8 @@ Explain how the finding should be written to the developer.
 ## Disabled Rules
 
 Rules can be disabled by ID in a target repository config when a broader rule intentionally does not apply to that repo. The agent should skip matching `## RULE-ID: Title` sections for disabled IDs.
+
+## Ownership Fields
+
+- `Owner`: team or project accountable for maintaining the rule and deciding whether it should be changed, promoted, or deprecated.
+- `Contributor`: person, team, or automation that originally contributed the rule or most recent substantial update.

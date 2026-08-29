@@ -10,6 +10,8 @@ Department-level Go rules for the demo department.
 | Scope | `department` |
 | Department | `demo` |
 | Language | `go` |
+| Owner | `demo` |
+| Contributor | `codex` |
 | Level | `recommended` |
 | Severity | `medium` |
 | Tags | `architecture`, `handlers` |

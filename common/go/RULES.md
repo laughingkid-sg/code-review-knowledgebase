@@ -9,6 +9,8 @@ Company-wide Go rules loaded by default for Go repositories.
 | Slug | `return-errors-with-context` |
 | Scope | `common` |
 | Language | `go` |
+| Owner | `platform-engineering` |
+| Contributor | `codex` |
 | Level | `recommended` |
 | Severity | `medium` |
 | Tags | `errors`, `observability` |
