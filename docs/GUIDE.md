@@ -4,6 +4,8 @@
 
 This repository stores markdown review rules for the code review agent. It does not store generated PRD or TD summaries.
 
+Rules in this repository should focus on code quality, correctness, security, maintainability, and common implementation mistakes. Business requirement alignment against PRD/TD documents belongs to the separate business-rules pipeline.
+
 ## Current Demo Layers
 
 The `code-review-demo` repository loads these layers:

@@ -2,11 +2,11 @@
 
 Project-level Go rules for `code-review-demo`.
 
-## GO-DEMO-PROJ-001: Keep demo APIs aligned with PRD and TD documents
+## GO-DEMO-PROJ-001: Do not continue after request binding or decode failures
 
 | Field | Value |
 | --- | --- |
-| Slug | `align-demo-apis-with-prd-and-td` |
+| Slug | `stop-after-request-binding-failure` |
 | Scope | `project` |
 | Department | `demo` |
 | Project | `demo-project` |
@@ -15,44 +15,64 @@ Project-level Go rules for `code-review-demo`.
 | Contributor | `codex` |
 | Level | `required` |
 | Severity | `high` |
-| Tags | `business-logic`, `documentation` |
-| References | `docs/PRD.md`, `docs/TDD.md` in the affected demo project |
+| Tags | `http`, `validation`, `error-handling` |
+| References | None |
 
 ### Rule
 
-Changes to demo API behavior must remain consistent with the relevant PRD and TD documents for the affected demo project.
+Handlers must stop processing after request binding, JSON decoding, or path/query parsing fails.
 
 ### Background
 
-The central demo requirement is to compare implementation logic against product and technical requirements. PRD and TD summaries are generated during each pull request run as implementation-repo CI artifacts, then used by the business-rule reviewer for the specific PR.
+The demo APIs accept JSON bodies and path/query parameters before calling service or persistence logic. If a handler writes an error response but continues execution, it can create records from invalid input, write multiple responses, or hide the real client error.
 
 ### Risks
 
-- Product risk: shipped behavior may not match the product requirement.
-- Technical risk: implementation may bypass architecture or data-flow decisions in the TD.
-- Review risk: code-only review may miss business logic defects that are visible only when compared against PRD and TD intent.
+- Correctness risk: invalid or partially parsed input can reach domain logic or persistence.
+- Security risk: malformed requests may bypass validation checks.
+- Reliability risk: handlers can attempt multiple response writes for one request.
 
 ### Review Checklist
 
-- Identify the affected demo project from `.code-review.yml`.
-- Read the PR-specific PRD/TD summary artifact generated in the CI run.
-- Compare changed handler, service, repository, and model behavior against the relevant requirements.
-- Flag mismatches where the code implements different validation, state transitions, permissions, or persistence behavior from the documents.
+- Check handler code after `ShouldBindJSON`, `json.NewDecoder(...).Decode`, path parsing, and query parsing.
+- Confirm the handler returns immediately after writing a bad-request or validation error response.
+- Flag ignored binding/decode errors when the parsed request object is used later.
+- Flag flows that continue into service, repository, or store calls after invalid input is detected.
 
 ### Good Example
 
 ```go
-if req.Price <= 0 {
-	return ErrInvalidPrice
+func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
+	var req CreateProductRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	product, err := h.store.Create(r.Context(), req)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	writeJSON(w, http.StatusCreated, product)
 }
 ```
 
 ### Bad Example
 
 ```go
-product.Price = req.Price
+func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
+	var req CreateProductRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, err)
+	}
+
+	product, _ := h.store.Create(r.Context(), req)
+	writeJSON(w, http.StatusCreated, product)
+}
 ```
 
 ### Review Comment Guidance
 
-Reference the affected PRD or TD requirement in plain language, then explain the implementation mismatch and required code change.
+Ask the developer to return immediately after the binding, decode, or parsing failure. Mention the invalid request data path that can still reach service or persistence code.
