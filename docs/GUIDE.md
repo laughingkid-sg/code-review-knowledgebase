@@ -8,13 +8,37 @@ This repository stores markdown review rules for the code review agent. It does 
 
 The `code-review-demo` repository loads these layers:
 
-1. `common/go`
-2. `demo/go`
-3. `demo/demo-project/go`
+1. `common/go/RULES.md`
+2. `demo/go/RULES.md`
+3. `demo/demo-project/go/RULES.md`
 
 ## Adding Rules
 
-Add one markdown file per rule. Keep rule IDs stable because future metrics will use them to track findings, upvotes, downvotes, consumption, and non-consumption.
+Add new rules to the relevant layer/language `RULES.md` file. Keep rule IDs stable because future metrics will use them to track findings, upvotes, downvotes, consumption, and non-consumption.
+
+Each rule should use this shape:
+
+```markdown
+## GO-COM-001: Short rule title
+
+| Field | Value |
+| --- | --- |
+| Slug | `short-rule-slug` |
+| Scope | `common` |
+| Language | `go` |
+| Level | `recommended` |
+| Severity | `medium` |
+| Tags | `tag-one`, `tag-two` |
+| References | None |
+
+### Rule
+### Background
+### Risks
+### Review Checklist
+### Good Example
+### Bad Example
+### Review Comment Guidance
+```
 
 ## Suppressing Rules
 
