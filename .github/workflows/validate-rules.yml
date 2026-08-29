@@ -8,7 +8,7 @@ on:
       - ".github/workflows/validate-rules.yml"
   push:
     branches:
-      - master
+      - main
     paths:
       - "**/RULES.md"
       - "scripts/validate_rules.py"
