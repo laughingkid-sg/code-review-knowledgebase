@@ -11,6 +11,8 @@ Project-level Go rules for `code-review-demo`.
 | Department | `demo` |
 | Project | `demo-project` |
 | Language | `go` |
+| Owner | `demo-project` |
+| Contributor | `codex` |
 | Level | `required` |
 | Severity | `high` |
 | Tags | `business-logic`, `documentation` |
