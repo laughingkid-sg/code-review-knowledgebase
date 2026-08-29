@@ -21,14 +21,14 @@ Add new rules to the relevant layer/language `RULES.md` file. Keep rule IDs stab
 Each rule should use this shape:
 
 ```markdown
-## GO-COM-001: short-rule-slug - Short rule title
+## [Short rule title](#short-rule-slug)
 
 | Field | Value |
 | --- | --- |
-| Owner | `example@gmail.com` |
+| ID | `GO-COM-001` |
+| Slug | `short-rule-slug` |
 | Contributor | `example@gmail.com` |
-| Level | `recommended` |
-| Severity | `medium` |
+| Severity | `P2` |
 | Tags | `tag-one`, `tag-two` |
 | References | None |
 
@@ -47,21 +47,15 @@ If a rule does not apply to a target repository, add its ID to `knowledge.disabl
 
 Suppressions should be rare and intentional. Prefer improving or narrowing the rule when it is too broad for multiple repos.
 
-## Ownership
+## Contributor
 
-Use `Owner` for the accountable email. Use `Contributor` for the email that supplied the rule content. These fields support future review routing and rule effectiveness reporting. For the current demo, `Owner` and `Contributor` can be the same email.
+Use `Contributor` for the email that supplied the rule content. This supports future review routing and rule effectiveness reporting.
 
-## Level And Severity
+## Severity
 
-Use `Level` for enforcement policy:
+Use `Severity` for both impact and review priority:
 
-- `required`: should block or demand a fix when confidently detected.
-- `recommended`: should normally be fixed, but may allow judgment.
-- `advisory`: useful guidance with low enforcement pressure.
-
-Use `Severity` for impact:
-
-- `critical`: security, data loss, or severe production risk.
-- `high`: likely correctness, security, or reliability issue.
-- `medium`: maintainability, observability, or moderate correctness risk.
-- `low`: minor readability or consistency issue.
+- `P0`: critical security, data loss, outage, or severe production risk.
+- `P1`: likely correctness, reliability, or security issue.
+- `P2`: maintainability, observability, performance, or moderate correctness risk.
+- `P3`: readability, consistency, or minor improvement.
