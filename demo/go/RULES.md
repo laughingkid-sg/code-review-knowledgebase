@@ -2,14 +2,14 @@
 
 Department-level Go rules for the demo department.
 
-## GO-DEMO-001: keep-http-handlers-thin - Keep HTTP handlers thin
+## [Keep HTTP handlers thin](#keep-http-handlers-thin)
 
 | Field | Value |
 | --- | --- |
-| Owner | `example@gmail.com` |
+| ID | `GO-DEMO-001` |
+| Slug | `keep-http-handlers-thin` |
 | Contributor | `example@gmail.com` |
-| Level | `recommended` |
-| Severity | `medium` |
+| Severity | `P2` |
 | Tags | `architecture`, `handlers` |
 | References | None |
 

@@ -51,19 +51,19 @@ Suggested prefixes:
 
 ## Rule Format
 
-Rules use pure markdown without YAML front matter. Each rule starts with a level-two heading containing the stable rule ID, slug, and title, followed by a metadata table and standard sections.
+Rules use pure markdown without YAML front matter. Each rule starts with a level-two linked heading for navigation, followed by a small metadata table and standard sections.
 
-The scope and language are derived from the `RULES.md` path, so they are not repeated in every rule table.
+The scope and language are derived from the `RULES.md` path, so they are not repeated in every rule table. The agent keeps the full rule for reporting and governance, but sends a compact rule payload to the LLM that excludes `Contributor`, `Tags`, and `References`.
 
 ```markdown
-## GO-COM-001: close-http-response-bodies - Always close HTTP response bodies
+## [Always close HTTP response bodies](#close-http-response-bodies)
 
 | Field | Value |
 | --- | --- |
-| Owner | `example@gmail.com` |
+| ID | `GO-COM-001` |
+| Slug | `close-http-response-bodies` |
 | Contributor | `example@gmail.com` |
-| Level | `recommended` |
-| Severity | `medium` |
+| Severity | `P2` |
 | Tags | `resource-management` |
 | References | None |
 
@@ -103,14 +103,17 @@ Explain how the finding should be written to the developer.
 
 ## Disabled Rules
 
-Rules can be disabled by ID in a target repository config when a broader rule intentionally does not apply to that repo. The agent should skip matching `## RULE-ID: Title` sections for disabled IDs.
+Rules can be disabled by ID in a target repository config when a broader rule intentionally does not apply to that repo. The agent should skip rule sections whose metadata table has a disabled `ID`.
 
-## Ownership Fields
+## Contributor Field
 
-- `Owner`: email accountable for maintaining the rule and deciding whether it should be changed, promoted, or deprecated.
-- `Contributor`: email that originally contributed the rule or most recent substantial update. For now, this can match `Owner`.
+- `Contributor`: email that originally contributed the rule or most recent substantial update.
 
-## Level And Severity
+## Severity
 
-- `Level`: how strongly the organization wants the rule enforced, such as `required`, `recommended`, or `advisory`.
-- `Severity`: expected impact when the rule is violated, such as `low`, `medium`, `high`, or `critical`.
+Severity represents both impact and review priority for this demo:
+
+- `P0`: critical security, data loss, outage, or severe production risk.
+- `P1`: likely correctness, reliability, or security issue.
+- `P2`: maintainability, observability, performance, or moderate correctness risk.
+- `P3`: readability, consistency, or minor improvement.

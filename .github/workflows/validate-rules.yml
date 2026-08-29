@@ -1,0 +1,30 @@
+name: Validate Rules
+
+on:
+  pull_request:
+    paths:
+      - "**/RULES.md"
+      - "scripts/validate_rules.py"
+      - ".github/workflows/validate-rules.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - "**/RULES.md"
+      - "scripts/validate_rules.py"
+      - ".github/workflows/validate-rules.yml"
+
+jobs:
+  validate-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate rule format
+        run: python scripts/validate_rules.py
